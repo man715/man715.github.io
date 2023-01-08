@@ -48,7 +48,7 @@ This could allow for an Server Side Request Forgery (SSRF attack). It may be pos
 
 The web application does not all you to add the target system as the monitored URL. Even if we try to trap the request and modify the request which suggests the check is being done server side. 
 
-![](../assets/img/error01.png)
+![](../assets/img/health-error01.png)
 
 To get around this restriction we can try to redirect to the server that you are trying to access. Our server will send a redirect to an internal server. The vulnerable server will then make a new request to the redirected location and return the results of that internal service. 
 
@@ -93,9 +93,9 @@ Fill out the form on the page to monitor your redirect on port 80 and the webhoo
 
 We find out that it is a Gogs version 0.5.5 server listening on that port. This is a git server similar to GitHub or GitLab but written in GoLang.
 
-![](../assets/img/gogs-service01.png)
+![](../assets/img/health-gogs-service01.png)
 
-![](../assets/img/gogs-version01.png)
+![](../assets/img/health-gogs-version01.png)
 
 ## Exploiting Gogs
 
@@ -228,7 +228,7 @@ Get the columns of the table
 ```
 
 
-![](../assets/img/db-columns.png)
+![](../assets/img/health-db-columns.png)
 *Looks like I did not mark all of the colums but I got the two that we need most. Can you find the ones I missed?*
 
 Let's get the password:
@@ -237,7 +237,7 @@ Let's get the password:
 sudo python3 redirect.py 80 "http://10.10.11.176:3000/api/v1/users/search?q=e')/**/union/**/all/**/select/**/null,null,(select/**/passwd/**/from/**/user),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1--" 
 ```
 
-![](password-in-hex.png)
+![](../assets/img/health-password-in-hex.png)
 
 Let's grab the salt:
 
@@ -311,16 +311,16 @@ That is interesting but I have no clue as to what it is doing. But after some go
 
 The interesting part is that it is using @file_get_contents which could allow us to get a file of our choosing from the system.
 
-![](../assets/img/file-get-contents.png)
+![](../assets/img/health-file-get-contents.png)
 Unfortunately, the application blocks us from just getting a file and instead gives us an error.
-![](../assets/img/error02.png)
+![](../assets/img/health-error02.png)
 
 However, now that we are on the system, we may  be able to find database creds and change the monitoredURL there?
 
 Back to digging around...
 Learning a bit more about Laravel, it uses a .env file to load environment variables to help with configuration of the application. The .env file is supposed to reside at the root of the application. After looking there and opening the file up we get mysql creds.
 
-![](mysql-creds.png)
+![](../assets/img/health-mysql-creds.png)
 
 ```shell
 mysql -ularavel -p
