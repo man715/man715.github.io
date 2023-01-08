@@ -23,7 +23,7 @@ image:
 | OS | Linux ![](https://www.hackthebox.com/images/linux.png){: width="32" height="32" } Windows ![](https://www.hackthebox.com/images/linux.png){: width="32" height="32" } |
 | Difficulty |  |
 | Difficulty Chart |  |
-| Radar Graph | ![](/assets/img/undetected-radar.png){: width="330" height="250"} |
+| Radar Graph | ![](../_posts/assets/img/undetected-radar.png){: width="330" height="250"} |
 | 1st Blood User | 19 mins, 43 seconds [![](https://www.hackthebox.eu/badge/image/357237)](href="https://www.hackthebox.eu/home/users/profile/357237") |
 | 1st Blood Root | 01 hours, 08 mins, 16 seconds [![](https://www.hackthebox.eu/badge/image/5204)](https://www.hackthebox.eu/home/users/profile/52045) |
 | Creator | [![](https://www.hackthebox.eu/badge/image/114053)](https://www.hackthebox.eu/home/users/profile/114053) || Name | <https://www.hackthebox.com/home/machines/profile/439> |
