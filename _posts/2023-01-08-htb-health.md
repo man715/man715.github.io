@@ -23,7 +23,7 @@ image:
 | OS | Linux ![](https://www.hackthebox.com/images/linux.png){: width="32" height="32" } Windows ![](https://www.hackthebox.com/images/.png){: width="32" height="32" } |
 | Difficulty |  |
 | Difficulty Chart |  |
-| Radar Graph | ![](health-radar.png){: width="330" height="250"} |
+| Radar Graph | ![](../assets/health-radar.png){: width="330" height="250"} |
 | Creator | [![](https://www.hackthebox.eu/badge/image/476556)](https://www.hackthebox.eu/home/users/profile/476556) |
 | Name | <https://www.hackthebox.com/home/machines/profile/491> |
 
