@@ -1,5 +1,5 @@
 ---
-title: <ENTER TITLE>
+title: Health from Hack the Box
 author: man715
 date: 2023-01-08
 categories: [HTB, Write-up]
