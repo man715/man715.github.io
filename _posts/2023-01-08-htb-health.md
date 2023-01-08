@@ -1,7 +1,7 @@
 ---
 title: <ENTER TITLE>
 author: man715
-date: yyyy-MM-dd
+date: 2023-01-08
 categories: [HTB, Write-up]
 tags: [write-up, hacking, htb]
 math: true
