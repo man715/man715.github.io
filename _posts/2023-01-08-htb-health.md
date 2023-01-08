@@ -23,7 +23,7 @@ image:
 | OS | Linux ![](https://www.hackthebox.com/images/linux.png){: width="32" height="32" } Windows ![](https://www.hackthebox.com/images/.png){: width="32" height="32" } |
 | Difficulty |  |
 | Difficulty Chart |  |
-| Radar Graph | ![](../assets/health-radar.png){: width="330" height="250"} |
+| Radar Graph | ![](../assets/img/health-radar.png){: width="330" height="250"} |
 | Creator | [![](https://www.hackthebox.eu/badge/image/476556)](https://www.hackthebox.eu/home/users/profile/476556) |
 | Name | <https://www.hackthebox.com/home/machines/profile/491> |
 
@@ -48,7 +48,7 @@ This could allow for an Server Side Request Forgery (SSRF attack). It may be pos
 
 The web application does not all you to add the target system as the monitored URL. Even if we try to trap the request and modify the request which suggests the check is being done server side. 
 
-![](error-01.png)
+![](../assets/img/error01.png)
 
 To get around this restriction we can try to redirect to the server that you are trying to access. Our server will send a redirect to an internal server. The vulnerable server will then make a new request to the redirected location and return the results of that internal service. 
 
@@ -93,9 +93,9 @@ Fill out the form on the page to monitor your redirect on port 80 and the webhoo
 
 We find out that it is a Gogs version 0.5.5 server listening on that port. This is a git server similar to GitHub or GitLab but written in GoLang.
 
-![](gogs-service.png)
+![](../assets/img/gogs-service01.png)
 
-![](gogs-version.png)
+![](../assets/img/gogs-version01.png)
 
 ## Exploiting Gogs
 
@@ -228,7 +228,7 @@ Get the columns of the table
 ```
 
 
-![](columns.png)
+![](../assets/img/db-columns.png)
 *Looks like I did not mark all of the colums but I got the two that we need most. Can you find the ones I missed?*
 
 Let's get the password:
@@ -305,15 +305,15 @@ ssh susanne@10.10.11.176
 Moving on up to root takes a little investigative work but is not all that difficult. 
 
 After the normal enumeration, there really was not anything too interesting to work on so I decided to see if there were any interesting tasks running occasionally. This is usually indicative of another user who has a cron (or other scheduler) job running. The easiest way to monitor these tasks is to use [pspy](https://github.com/DominicBreuker/pspy). Once that is running, there is a command that may stand out: 
-![](interest-cron-job.png)
+![](../assets/img/interest-cron-job01.png)
 
 That is interesting but I have no clue as to what it is doing. But after some googling around and looking into Laravel, this is basically running whatever code is in the Laravel web application located /var/www/html/app/Console/Kernel.php and the function `schedule`. We can take a look and see what is happening with that code and see that it is getting all of the tasks from the database and then using `HealthChecker`'s `check` function.  After digging around a bit we find that function /var/www/html/app/Http/Controllers/HealthChecker.php. We should also note that it is being rand as `root`. 
 
 The interesting part is that it is using @file_get_contents which could allow us to get a file of our choosing from the system.
 
-![](file_get_contents.png)
+![](../assets/img/file-get-contents.png)
 Unfortunately, the application blocks us from just getting a file and instead gives us an error.
-![](error-02.png)
+![](../assets/img/error02.png)
 
 However, now that we are on the system, we may  be able to find database creds and change the monitoredURL there?
 
