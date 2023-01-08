@@ -410,7 +410,7 @@ chmod 600 ./key
 ssh -i ./key root@10.10.11.176
 ```
 
-![](../assets/img/root-txt.png)
+![](/posts/assets/img/root-txt.png)
 
 
 This was a really fun box. I hope you enjoyed the walkthrough. If you have any questions or corrections, feel free to contact me on Discord: Man715_#5234. 
