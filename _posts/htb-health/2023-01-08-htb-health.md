@@ -395,7 +395,7 @@ We will use the file filter to get the file from the local machine instead of us
 
 It worked:
 
-![](rsa_key.png)
+![](assets/img/rsa_key.png)
 
 Copy and paste it into a file. The easiest way that I was able to do it was to use:
 ```shell
@@ -410,7 +410,7 @@ chmod 600 ./key
 ssh -i ./key root@10.10.11.176
 ```
 
-![](root-txt.png)
+![](assets/img/root-txt.png)
 
 
 This was a really fun box. I hope you enjoyed the walkthrough. If you have any questions or corrections, feel free to hit me up on Discord: Man715_#5234. 
